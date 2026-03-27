@@ -10,14 +10,19 @@ obtenerSaldo = undefined
 retirar :: Int -> Int -> Maybe Int
 retirar = undefined
 
+-- procesarRetiro :: Int -> Int -> Maybe Int
+-- procesarRetiro idCuenta cantidad =
+--     case obtenerSaldo idCuenta of
+--         Nothing -> Nothing
+--         Just saldo ->
+--             case retirar saldo cantidad of
+--                 Nothing -> Nothing
+--                 Just nuevoSaldo -> Just nuevoSaldo
+
 procesarRetiro :: Int -> Int -> Maybe Int
 procesarRetiro idCuenta cantidad =
-    case obtenerSaldo idCuenta of
-        Nothing -> Nothing
-        Just saldo ->
-            case retirar saldo cantidad of
-                Nothing -> Nothing
-                Just nuevoSaldo -> Just nuevoSaldo
+    obtenerSaldo idCuenta >>= \saldo ->
+    retirar saldo cantidad
 
 calcularInteres :: Int -> Maybe Int
 calcularInteres idCuenta = do
@@ -28,7 +33,7 @@ calcularInteres idCuenta = do
 --Ejercicio 2
 
 sumarSaldos :: Maybe Int -> Maybe Int -> Maybe Int
-sumarSaldos mx my = --aqui va codiguin
+sumarSaldos mx my = undefined--aqui va codiguin
 
 --Parte II: Generacion de diccionarios
 
