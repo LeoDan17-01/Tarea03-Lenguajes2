@@ -1,3 +1,13 @@
+{-|
+Module       : Practica2
+Description  : 
+Copyright    :
+Maintainer   : 	Hernández Islas Leonardo Daniel
+        	    Olivos Noriega Danna Abigail
+Stability    : experimental
+Potability   : portable
+
+-}
 module Tarea03 where
 
 --Parte 1 Monada Maybe y el operador >>=
@@ -24,11 +34,17 @@ procesarRetiro idCuenta cantidad =
     obtenerSaldo idCuenta >>= \saldo ->
     retirar saldo cantidad
 
+-- calcularInteres :: Int -> Maybe Int
+-- calcularInteres idCuenta = do
+--     saldo <- obtenerSaldo idCuenta
+--     let interes = saldo `div` 10
+--     return (saldo + interes) 
+
 calcularInteres :: Int -> Maybe Int
-calcularInteres idCuenta = do
-    saldo <- obtenerSaldo idCuenta
+calcularInteres idCuenta = 
+    obtenerSaldo idCuenta >>= \saldo ->
     let interes = saldo `div` 10
-    return (saldo + interes) 
+    in return (saldo + interes)
 
 --Ejercicio 2
 
