@@ -104,10 +104,9 @@ ordIntDict = OrdDict {
 
 --1. Definir el record HashableDict
 data HashableDict a = HashableDict 
-    { hash :: a -> Int
+    { hashH :: a -> Int
     , eqDictH :: EqDict a
     }
-    -- Agregar campos aquí
 
 -- Type aliases para HashMap
 type Bucket k v = [(k, v)]
@@ -119,11 +118,42 @@ emptyMap = replicate 7 []
 
 -- 2. Traducir insert y lookup'
 insert :: HashableDict k -> k -> v -> HashMap k v -> HashMap k v
-insert dict k v m = undefined
+insert dict k v m = 
+    let idx = (hashH dict k) `mod` 7
+        bucket = m !! idx
+        bucket' = removeKey (eqDictH dict) k bucket
+    in take idx m ++ [(k, v) : bucket'] ++ drop (idx + 1) m
+  where
+    removeKey :: EqDict k -> k -> Bucket k v -> Bucket k v
+    removeKey _ _ [] = []
+    removeKey eqDict' key ((k', v'):bs)
+        | eq eqDict' key k' = bs
+        | otherwise = (k', v') : removeKey eqDict' key bs
 
 lookup' :: HashableDict k -> k -> HashMap k v -> Maybe v
-lookup' dict k m = undefined
-
+lookup' dict k m = 
+    let idx = (hashH dict k) `mod` 7
+        bucket = m !! idx
+    in findKey (eqDictH dict) k bucket
+  where
+    findKey :: EqDict k -> k -> Bucket k v -> Maybe v
+    findKey _ _ [] = Nothing
+    findKey eqDict' key ((k', v'):bs)
+        | eq eqDict' key k' = Just v'
+        | otherwise = findKey eqDict' key bs
 -- 3. Construir manualmente hashableIntDict
+integerMod :: Int -> Int
+integerMod x = x `mod` 7
+
 hashableIntDict :: HashableDict Int
-hashableIntDict = undefined
+hashableIntDict = HashableDict {
+    hashH = integerMod,
+    eqDictH = eqIntDict
+}
+
+-- 4. Verificar que funciona
+testHashMap :: Maybe String
+testHashMap = 
+    let m = emptyMap :: HashMap Int String
+        m' = insert hashableIntDict 42 "cuarenta y dos" m
+    in lookup' hashableIntDict 42 m'
