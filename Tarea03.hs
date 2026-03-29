@@ -33,47 +33,60 @@ calcularInteres idCuenta = do
 --Ejercicio 2
 
 sumarSaldos :: Maybe Int -> Maybe Int -> Maybe Int
-sumarSaldos mx my = undefined--aqui va codiguin
+sumarSaldos mx my = mx >>= \x -> my >>= \y -> return (x + y)
 
 --Parte II: Generacion de diccionarios
 
 --Ejercicio 3 
+
 -- 1. Definir los records
 data EqDict a = EqDict 
     { eq :: a -> a -> Bool 
     }
-    -- Agregar campos aquí
 
 data OrdDict a = OrdDict 
     { leq :: a -> a -> Bool
     , eqDict :: EqDict a
     }
-    -- Agregar campos aquí
 
 -- 2. Reescribir minimum y estaOrdenada
 minimum' :: OrdDict a -> [a] -> a
-minimum' dict xs = undefined
+minimum' x [] = error "No hay minimo"
+minimum' _ [x] = x
+minimum' dict (x:y:xs) 
+                    | leq dict x y = minimum' dict (x:xs)
+                    | True = minimum' dict (y:xs)
 
 estaOrdenada :: OrdDict a -> [a] -> Bool
-estaOrdenada dict xs = undefined
+estaOrdenada _ [] = True
+estaOrdenada _ [_] = True 
+--Nota habia puesto _ _ lo que daba siempre True 
+estaOrdenada dict (x:y:xs)
+                    | leq dict x y = estaOrdenada dict (y:xs)
+                    | True = False 
 
 -- 3. Construir manualmente ordIntDict
 -- Funciones primitivas (asumir que existen)
 integerEq :: Int -> Int -> Bool
-integerEq = undefined
+integerEq = (==)
 
 integerLe :: Int -> Int -> Bool
-integerLe = undefined
+integerLe = (<=)
 
 eqIntDict :: EqDict Int
-eqIntDict = undefined
+eqIntDict = EqDict {
+    eq = integerEq
+}
 
 ordIntDict :: OrdDict Int
-ordIntDict = undefined
+ordIntDict = OrdDict {
+    leq = integerLe
+    , eqDict = eqIntDict
+}
 
--- Ejercicio 4
+--Ejercicio 4
 
--- 1. Definir el record HashableDict
+--1. Definir el record HashableDict
 data HashableDict a = HashableDict 
     { hash :: a -> Int
     , eqDictH :: EqDict a
